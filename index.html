@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClaimSwift AI - Mini Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Serif:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f6f3ed;
+      --ink: #14213d;
+      --panel: #fffdf8;
+      --brand: #c24d2c;
+      --brand-2: #1f7a8c;
+      --ok: #1b8f4d;
+      --warn: #b57400;
+      --bad: #a4161a;
+      --line: #d9d1c5;
+      --shadow: 0 16px 40px rgba(20, 33, 61, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 20% 20%, #f9e7d0 0%, transparent 35%),
+        radial-gradient(circle at 85% 10%, #d9f0f4 0%, transparent 30%),
+        var(--bg);
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 18px 44px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #fff9ef, #ffffff);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 18px;
+      animation: rise 550ms ease-out both;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-family: "IBM Plex Serif", serif;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      line-height: 1.1;
+    }
+
+    .sub {
+      margin: 0;
+      color: #3b4a66;
+      max-width: 780px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 900px) {
+      .grid {
+        grid-template-columns: 1.2fr 1fr;
+      }
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      animation: rise 650ms ease-out both;
+    }
+
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: 1.1rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .form-grid .full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      font-size: 0.84rem;
+      margin-bottom: 4px;
+      color: #3e4d68;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid #cabfae;
+      border-radius: 10px;
+      padding: 10px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 11px 14px;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      font-family: inherit;
+    }
+
+    .primary {
+      background: var(--brand);
+      color: white;
+    }
+
+    .secondary {
+      background: var(--brand-2);
+      color: white;
+    }
+
+    .ghost {
+      background: #f2ede4;
+      color: #30425e;
+      border: 1px solid #d7cbb9;
+    }
+
+    .scenario-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .flow {
+      margin: 0;
+      padding-left: 18px;
+      line-height: 1.55;
+    }
+
+    .pill {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-right: 8px;
+      border: 1px solid transparent;
+    }
+
+    .ok {
+      color: var(--ok);
+      border-color: #bfe8ce;
+      background: #edf9f1;
+    }
+
+    .warn {
+      color: var(--warn);
+      border-color: #f1d59a;
+      background: #fff6df;
+    }
+
+    .bad {
+      color: var(--bad);
+      border-color: #f4b8bb;
+      background: #fff0f1;
+    }
+
+    .result {
+      border: 1px dashed #c7baaa;
+      border-radius: 12px;
+      padding: 12px;
+      min-height: 190px;
+      background: #fff;
+    }
+
+    .result h3 {
+      margin: 0 0 8px;
+    }
+
+    .kpi {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .kpi div {
+      border: 1px solid #d5ccbf;
+      border-radius: 10px;
+      padding: 10px;
+      background: #fff;
+      text-align: center;
+    }
+
+    .kpi b {
+      display: block;
+      font-size: 1.1rem;
+      margin-top: 4px;
+    }
+
+    .stack {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    @media (max-width: 640px) {
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .feature-grid div {
+      border: 1px solid #d8cfc2;
+      border-radius: 12px;
+      background: #fff;
+      padding: 11px;
+    }
+
+    .feature-grid h3 {
+      margin: 0 0 6px;
+      font-size: 0.96rem;
+    }
+
+    .feature-grid p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #3d4a62;
+      line-height: 1.45;
+    }
+
+    .plan-list {
+      margin: 0;
+      padding-left: 18px;
+      line-height: 1.55;
+    }
+
+    .feed {
+      margin-top: 12px;
+      border: 1px solid #d8cfc2;
+      border-radius: 12px;
+      background: #fff;
+      padding: 10px;
+    }
+
+    .feed h3,
+    .clarification h3,
+    .guardrails h3,
+    .reviewer h3 {
+      margin: 0 0 8px;
+      font-size: 0.95rem;
+    }
+
+    .feed ul {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      color: #34445f;
+      max-height: 170px;
+      overflow: auto;
+    }
+
+    .clarification,
+    .guardrails,
+    .reviewer {
+      margin-top: 12px;
+      border: 1px solid #d8cfc2;
+      border-radius: 12px;
+      background: #fff;
+      padding: 10px;
+    }
+
+    .clarification p,
+    .guardrails p,
+    .reviewer p {
+      margin: 0 0 8px;
+      font-size: 0.9rem;
+      color: #34445f;
+    }
+
+    .guardrail-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .guardrail-row div {
+      border: 1px solid #dfd6c9;
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 0.84rem;
+      background: #fffefb;
+    }
+
+    .reviewer-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .reviewer-buttons button {
+      padding: 8px 10px;
+      font-size: 0.86rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @keyframes rise {
+      from {
+        transform: translateY(10px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>ClaimSwift AI</h1>
+      <p class="sub">
+        Mini prototype for explainable straight-through claims processing. Submit a sample claim, run rule and risk checks,
+        and preview a transparent decision with settlement estimate.
+      </p>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <h2>1) Claim Intake</h2>
+        <div class="form-grid">
+          <div>
+            <label for="claimId">Claim ID</label>
+            <input id="claimId" value="CLM-2026-1042" />
+          </div>
+          <div>
+            <label for="policyType">Policy Type</label>
+            <select id="policyType">
+              <option value="health">Health</option>
+              <option value="motor">Motor</option>
+              <option value="travel">Travel</option>
+            </select>
+          </div>
+          <div>
+            <label for="claimAmount">Claim Amount (INR)</label>
+            <input id="claimAmount" type="number" value="18500" min="0" />
+          </div>
+          <div>
+            <label for="deductible">Deductible (INR)</label>
+            <input id="deductible" type="number" value="2000" min="0" />
+          </div>
+          <div>
+            <label for="docConfidence">OCR Confidence (%)</label>
+            <input id="docConfidence" type="number" value="92" min="0" max="100" />
+          </div>
+          <div>
+            <label for="dupSignal">Duplicate Signal</label>
+            <select id="dupSignal">
+              <option value="none">None</option>
+              <option value="possible">Possible</option>
+              <option value="strong">Strong</option>
+            </select>
+          </div>
+          <div>
+            <label for="providerRisk">Provider Risk</label>
+            <select id="providerRisk">
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+          <div>
+            <label for="missingDocs">Missing Docs</label>
+            <select id="missingDocs">
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+          <div class="full">
+            <label for="notes">Investigation Notes</label>
+            <textarea id="notes" placeholder="Optional notes from operator"></textarea>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="primary" id="runBtn">Run Decision Orchestrator</button>
+          <button class="secondary" id="resetBtn">Reset Demo Data</button>
+        </div>
+
+        <h2 style="margin-top: 14px">Quick Demo Scenarios</h2>
+        <div class="scenario-row">
+          <button class="ghost" id="demoLowBtn">Low Risk Auto-Settle</button>
+          <button class="ghost" id="demoMediumBtn">Medium Risk Verify</button>
+          <button class="ghost" id="demoHighBtn">High Risk Escalate</button>
+          <button class="ghost" id="demoEdgeBtn">Edge Case No Payable</button>
+          <button class="ghost" id="demoClarifyBtn">Clarification Loop</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>2) Decision, Explanation, and Audit</h2>
+        <div class="result" id="resultBox">
+          <h3>Ready to process</h3>
+          <p>Run the orchestrator to see risk tier, decision outcome, payout estimate, and reason codes.</p>
+        </div>
+
+        <h2 style="margin-top: 14px">Processing Flow</h2>
+        <ol class="flow">
+          <li>Intake pre-check -> quality and completeness</li>
+          <li>Document extraction -> confidence scoring</li>
+          <li>Policy and coverage rules -> eligibility, exclusions, deductible</li>
+          <li>Fraud/risk screening -> duplicate and anomaly signals</li>
+          <li>Decision gate -> auto-settle, verify, or escalate</li>
+        </ol>
+
+        <div class="kpi">
+          <div>STP Rate <b id="kpiStp">67%</b></div>
+          <div>Avg TAT <b id="kpiTat">11 min</b></div>
+          <div>Manual Review <b id="kpiManual">33%</b></div>
+        </div>
+
+        <div class="guardrails">
+          <h3>Dynamic Risk Guardrails</h3>
+          <div class="guardrail-row">
+            <div id="amountGuardrail">Amount threshold check: pending</div>
+            <div id="fraudBand">Fraud score band: pending</div>
+            <div id="routingGuardrail">Routing rule: pending</div>
+          </div>
+        </div>
+
+        <div class="feed">
+          <h3>Live Agent Activity Feed</h3>
+          <ul id="activityFeed">
+            <li>Waiting for claim processing run.</li>
+          </ul>
+        </div>
+
+        <div class="clarification hidden" id="clarificationPanel">
+          <h3>Clarification Required</h3>
+          <p id="clarificationMessage">Additional information is required before decisioning.</p>
+          <label for="clarificationInput">Provide missing field or confirmation</label>
+          <input id="clarificationInput" placeholder="Example: Re-uploaded invoice, amount confirmed as INR 12,450" />
+          <div class="btn-row" style="margin-top: 8px;">
+            <button class="secondary" id="clarificationSubmitBtn">Submit Clarification and Resume</button>
+          </div>
+        </div>
+
+        <div class="reviewer hidden" id="reviewerPanel">
+          <h3>Reviewer Console (Manual Path)</h3>
+          <p id="reviewerSuggestion">No manual action required.</p>
+          <div class="reviewer-buttons">
+            <button class="ghost" id="reviewApproveBtn">Reviewer Approve</button>
+            <button class="ghost" id="reviewRejectBtn">Reviewer Reject</button>
+            <button class="ghost" id="reviewOverrideBtn">Reviewer Override to Verify</button>
+          </div>
+          <p id="reviewerStatus" style="margin-top: 8px;">Reviewer status: Pending</p>
+        </div>
+      </section>
+    </div>
+
+    <section class="stack">
+      <section class="card">
+        <h2>3) Project Overview and Why It Matters</h2>
+        <p class="sub" style="max-width: none; margin-bottom: 10px;">
+          ClaimSwift AI is an explainable straight-through claims engine that automates more than intake. It validates
+          policy coverage, checks fraud risk, calculates payout, and makes a transparent decision to approve, verify,
+          or escalate. This improves customer speed and insurer control at the same time.
+        </p>
+        <div class="feature-grid">
+          <div>
+            <h3>Explainable Decisions</h3>
+            <p>Every outcome includes reason codes such as coverage fit, duplicate risk, and confidence quality.</p>
+          </div>
+          <div>
+            <h3>Fraud-Aware Automation</h3>
+            <p>The system balances speed with leakage control by using anomaly and duplicate checks before settlement.</p>
+          </div>
+          <div>
+            <h3>Policy Guardrails</h3>
+            <p>Rule-based validation for eligibility, exclusions, deductible, and limits keeps outcomes auditable.</p>
+          </div>
+          <div>
+            <h3>Human-in-the-Loop Safety</h3>
+            <p>Risk tiers drive routing so only safe low-risk claims auto-settle while others move to verification.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>4) Further Implementation Plan</h2>
+        <ol class="plan-list">
+          <li><b>Phase 1 (MVP):</b> Single claim category, OCR extraction, rules, baseline risk model, and dashboard.</li>
+          <li><b>Phase 2 (Pilot):</b> Configurable rules, better parsing, explanation panel, and manual verification queue.</li>
+          <li><b>Phase 3 (Operations):</b> Payment workflow integration, stronger duplicate checks, and audit hardening.</li>
+          <li><b>Phase 4 (Scale):</b> Multi-product support, enterprise security controls, and advanced fraud intelligence.</li>
+        </ol>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const resultBox = document.getElementById("resultBox");
+    const activityFeed = document.getElementById("activityFeed");
+    const clarificationPanel = document.getElementById("clarificationPanel");
+    const clarificationMessage = document.getElementById("clarificationMessage");
+    const clarificationInput = document.getElementById("clarificationInput");
+    const reviewerPanel = document.getElementById("reviewerPanel");
+    const reviewerSuggestion = document.getElementById("reviewerSuggestion");
+    const reviewerStatus = document.getElementById("reviewerStatus");
+
+    let lastTier = "Low";
+    let lastDecision = "Approve";
+
+    function updateActivity(lines) {
+      activityFeed.innerHTML = lines.map(function (line) {
+        return "<li>" + line + "</li>";
+      }).join("");
+    }
+
+    function updateGuardrails(amount, riskScore, decision) {
+      const riskBand = riskScore <= 30 ? "0.0-0.3" : (riskScore <= 70 ? "0.3-0.7" : "0.7+");
+      document.getElementById("amountGuardrail").textContent =
+        "Amount threshold check: " + (amount <= 25000 ? "Within INR 25,000" : "Above INR 25,000");
+      document.getElementById("fraudBand").textContent = "Fraud score band: " + riskBand;
+      document.getElementById("routingGuardrail").textContent = "Routing rule: " + decision;
+    }
+
+    function setFormData(data) {
+      document.getElementById("claimId").value = data.claimId;
+      document.getElementById("policyType").value = data.policyType;
+      document.getElementById("claimAmount").value = data.claimAmount;
+      document.getElementById("deductible").value = data.deductible;
+      document.getElementById("docConfidence").value = data.docConfidence;
+      document.getElementById("dupSignal").value = data.dupSignal;
+      document.getElementById("providerRisk").value = data.providerRisk;
+      document.getElementById("missingDocs").value = data.missingDocs;
+      document.getElementById("notes").value = data.notes;
+    }
+
+    function normalizePct(v) {
+      return Math.max(0, Math.min(100, Number(v) || 0));
+    }
+
+    function runDecision(options) {
+      const opts = options || {};
+      const fromClarification = !!opts.fromClarification;
+      const amount = Number(document.getElementById("claimAmount").value) || 0;
+      const deductible = Number(document.getElementById("deductible").value) || 0;
+      const confidenceRaw = normalizePct(document.getElementById("docConfidence").value);
+      const dup = document.getElementById("dupSignal").value;
+      const provider = document.getElementById("providerRisk").value;
+      const missingDocs = document.getElementById("missingDocs").value === "1";
+      const policyType = document.getElementById("policyType").value;
+      const claimId = document.getElementById("claimId").value.trim() || "N/A";
+
+      const clarificationNeeded = (confidenceRaw < 75) || missingDocs;
+      if (clarificationNeeded && !fromClarification) {
+        clarificationPanel.classList.remove("hidden");
+        reviewerPanel.classList.add("hidden");
+        reviewerStatus.textContent = "Reviewer status: Pending";
+        clarificationMessage.textContent = missingDocs
+          ? "Mandatory document is missing. Upload a clearer document or confirm required values to continue."
+          : "Extraction confidence is below threshold. Confirm key fields to continue processing.";
+
+        updateActivity([
+          "Intake Agent: validating uploaded claim package",
+          "Extraction Agent: low-confidence fields detected",
+          "Clarification Agent: request created and sent to claimant",
+          "Workflow status: clarification_required"
+        ]);
+
+        updateGuardrails(amount, 45, "Pending Clarification");
+
+        resultBox.innerHTML =
+          "<h3>Claim " + claimId + " paused</h3>" +
+          "<p><span class=\"pill warn\">Decision: Pending Clarification</span></p>" +
+          "<p>The workflow paused safely because confidence/required document checks failed.</p>" +
+          "<p>Submit clarification to resume policy validation and risk scoring.</p>";
+        return;
+      }
+
+      clarificationPanel.classList.add("hidden");
+
+      const confidence = fromClarification ? Math.max(confidenceRaw, 86) : confidenceRaw;
+      let risk = 0;
+      const reasons = [];
+
+      if (missingDocs) {
+        if (fromClarification) {
+          reasons.push("Missing-document issue resolved via clarification");
+        } else {
+          risk += 35;
+          reasons.push("Missing mandatory documents");
+        }
+      }
+
+      if (confidence < 75) {
+        risk += 25;
+        reasons.push("Low extraction confidence");
+      } else if (confidence < 88) {
+        risk += 12;
+        reasons.push("Moderate extraction confidence");
+      } else {
+        reasons.push("High extraction confidence");
+      }
+
+      if (dup === "possible") {
+        risk += 20;
+        reasons.push("Possible duplicate claim pattern");
+      }
+      if (dup === "strong") {
+        risk += 40;
+        reasons.push("Strong duplicate claim signal");
+      }
+
+      if (provider === "medium") {
+        risk += 12;
+        reasons.push("Provider marked medium risk");
+      }
+      if (provider === "high") {
+        risk += 26;
+        reasons.push("Provider marked high risk");
+      }
+
+      if (amount > 50000) {
+        risk += 15;
+        reasons.push("High-value claim threshold exceeded");
+      }
+
+      if (fromClarification) {
+        reasons.push("Clarification response accepted and workflow resumed");
+      }
+
+      const payable = Math.max(0, amount - deductible);
+
+      let tier = "Low";
+      let decision = "Approve";
+      let cls = "ok";
+
+      if (risk >= 70) {
+        tier = "High";
+        decision = "Escalate";
+        cls = "bad";
+      } else if (risk >= 35) {
+        tier = "Medium";
+        decision = "Verify";
+        cls = "warn";
+      }
+
+      const stp = tier === "Low" ? "82%" : tier === "Medium" ? "54%" : "28%";
+      const tat = tier === "Low" ? "8 min" : tier === "Medium" ? "23 min" : "2.4 hrs";
+      const manual = tier === "Low" ? "18%" : tier === "Medium" ? "46%" : "72%";
+
+      updateGuardrails(amount, risk, decision);
+
+      updateActivity([
+        "Intake Agent: package validated",
+        "Extraction Agent: structured fields captured (confidence " + confidence + "%)",
+        "Policy Agent: eligibility and deductible checks completed",
+        "Fraud Agent: risk score computed as " + risk + "/100",
+        "Decision Agent: routed to " + decision.toLowerCase() + ""
+      ]);
+
+      document.getElementById("kpiStp").textContent = stp;
+      document.getElementById("kpiTat").textContent = tat;
+      document.getElementById("kpiManual").textContent = manual;
+
+      lastTier = tier;
+      lastDecision = decision;
+
+      if (tier === "Low") {
+        reviewerPanel.classList.add("hidden");
+      } else {
+        reviewerPanel.classList.remove("hidden");
+        reviewerSuggestion.textContent = "System recommendation: " + decision + " (" + tier + " risk).";
+        reviewerStatus.textContent = "Reviewer status: Pending";
+      }
+
+      const chips = [
+        '<span class="pill ' + cls + '">Decision: ' + decision + '</span>',
+        '<span class="pill ' + cls + '">Risk Tier: ' + tier + '</span>'
+      ].join(" ");
+
+      resultBox.innerHTML =
+        '<h3>Claim ' + claimId + ' processed</h3>' +
+        '<p>' + chips + '</p>' +
+        '<p><b>Policy:</b> ' + policyType.toUpperCase() + ' | <b>Risk Score:</b> ' + risk + '/100 | <b>Estimated Payout:</b> INR ' + payable.toLocaleString("en-IN") + '</p>' +
+        '<p><b>Why:</b></p><ul>' + reasons.map(function (r) { return '<li>' + r + '</li>'; }).join("") + '</ul>' +
+        '<p><b>Audit trail:</b> Rule check complete, fraud scan complete, decision gate outcome generated.</p>';
+    }
+
+    function resetDemo() {
+      setFormData({
+        claimId: "CLM-2026-1042",
+        policyType: "health",
+        claimAmount: 18500,
+        deductible: 2000,
+        docConfidence: 92,
+        dupSignal: "none",
+        providerRisk: "low",
+        missingDocs: "0",
+        notes: ""
+      });
+      resultBox.innerHTML = '<h3>Ready to process</h3><p>Run the orchestrator to see risk tier, decision outcome, payout estimate, and reason codes.</p>';
+      document.getElementById("kpiStp").textContent = "67%";
+      document.getElementById("kpiTat").textContent = "11 min";
+      document.getElementById("kpiManual").textContent = "33%";
+      reviewerPanel.classList.add("hidden");
+      clarificationPanel.classList.add("hidden");
+      clarificationInput.value = "";
+      reviewerStatus.textContent = "Reviewer status: Pending";
+      updateGuardrails(0, 0, "Pending");
+      updateActivity(["Waiting for claim processing run."]);
+    }
+
+    function loadScenario(type) {
+      const scenarios = {
+        low: {
+          claimId: "CLM-2026-2101",
+          policyType: "health",
+          claimAmount: 14000,
+          deductible: 2000,
+          docConfidence: 95,
+          dupSignal: "none",
+          providerRisk: "low",
+          missingDocs: "0",
+          notes: "Standard OPD reimbursement. Clean bill and complete documents."
+        },
+        medium: {
+          claimId: "CLM-2026-2102",
+          policyType: "motor",
+          claimAmount: 42000,
+          deductible: 5000,
+          docConfidence: 84,
+          dupSignal: "possible",
+          providerRisk: "medium",
+          missingDocs: "0",
+          notes: "Repair invoice mismatch on one line item. Send to verification queue."
+        },
+        high: {
+          claimId: "CLM-2026-2103",
+          policyType: "health",
+          claimAmount: 96000,
+          deductible: 2500,
+          docConfidence: 68,
+          dupSignal: "strong",
+          providerRisk: "high",
+          missingDocs: "1",
+          notes: "Duplicate pattern and missing documents. Escalate for fraud investigation."
+        },
+        edge: {
+          claimId: "CLM-2026-2104",
+          policyType: "travel",
+          claimAmount: 1500,
+          deductible: 2000,
+          docConfidence: 90,
+          dupSignal: "none",
+          providerRisk: "low",
+          missingDocs: "0",
+          notes: "Claim amount below deductible. Expected payable is zero."
+        },
+        clarify: {
+          claimId: "CLM-2026-2105",
+          policyType: "health",
+          claimAmount: 22000,
+          deductible: 2500,
+          docConfidence: 62,
+          dupSignal: "none",
+          providerRisk: "low",
+          missingDocs: "1",
+          notes: "Blurred invoice and missing discharge summary. Clarification loop expected."
+        }
+      };
+
+      setFormData(scenarios[type]);
+      runDecision();
+    }
+
+    function applyReviewerAction(action) {
+      if (reviewerPanel.classList.contains("hidden")) {
+        return;
+      }
+
+      if (action === "approve") {
+        reviewerStatus.textContent = "Reviewer status: Approved manually for controlled settlement.";
+      } else if (action === "reject") {
+        reviewerStatus.textContent = "Reviewer status: Rejected and routed for further investigation.";
+      } else {
+        reviewerStatus.textContent = "Reviewer status: Overridden to verification queue.";
+      }
+
+      updateActivity([
+        "Reviewer Console: manual decision recorded",
+        "Decision Agent: post-review routing updated",
+        "Audit Layer: reviewer action captured",
+        "Final status: " + reviewerStatus.textContent.replace("Reviewer status: ", "")
+      ]);
+    }
+
+    function submitClarification() {
+      const text = clarificationInput.value.trim();
+      if (!text) {
+        clarificationMessage.textContent = "Please enter clarification details before resuming workflow.";
+        return;
+      }
+
+      updateActivity([
+        "Clarification Agent: claimant response received",
+        "Extraction Agent: fields revalidated",
+        "Workflow status: resuming decision pipeline"
+      ]);
+
+      document.getElementById("missingDocs").value = "0";
+      clarificationInput.value = "";
+      runDecision({ fromClarification: true });
+    }
+
+    document.getElementById("runBtn").addEventListener("click", runDecision);
+    document.getElementById("resetBtn").addEventListener("click", resetDemo);
+    document.getElementById("demoLowBtn").addEventListener("click", function () { loadScenario("low"); });
+    document.getElementById("demoMediumBtn").addEventListener("click", function () { loadScenario("medium"); });
+    document.getElementById("demoHighBtn").addEventListener("click", function () { loadScenario("high"); });
+    document.getElementById("demoEdgeBtn").addEventListener("click", function () { loadScenario("edge"); });
+    document.getElementById("demoClarifyBtn").addEventListener("click", function () { loadScenario("clarify"); });
+    document.getElementById("clarificationSubmitBtn").addEventListener("click", submitClarification);
+    document.getElementById("reviewApproveBtn").addEventListener("click", function () { applyReviewerAction("approve"); });
+    document.getElementById("reviewRejectBtn").addEventListener("click", function () { applyReviewerAction("reject"); });
+    document.getElementById("reviewOverrideBtn").addEventListener("click", function () { applyReviewerAction("override"); });
+    resetDemo();
+  </script>
+</body>
+</html>
